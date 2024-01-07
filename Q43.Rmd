@@ -1,0 +1,62 @@
+---
+title: "Q43"
+author: "Rahul Atre"
+date: "2023-11-29"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggdendro)
+```
+
+## Q43 [Clustering]
+
+Consider the USArrests data. We perform hierarchical clustering on the states.
+
+1. Using hierarchical clustering with complete linkage and Euclidean distance, cluster the states (don’t scale the data at first).
+
+```{R}
+# Calculate the euclidean distance matrix
+dist_matrix <- dist(USArrests)
+
+# Perform hierarchical clustering with complete linkage
+arrest_hier_cluster <- hclust(dist_matrix, method = "complete")
+
+# Plot the dendrogram
+ggdendrogram(arrest_hier_cluster)
+```
+
+2. Cut the dendrogram at a height that results in three distinct clusters. Which states belong to which clusters?
+
+```{R}
+# Cut the dendrogram into 3 clusters and assign to cluster_a
+split_cluster <- cutree(arrest_hier_cluster, k = 3)
+split_cluster
+
+# Create a table of split_cluster
+cluster_table <- table(split_cluster)
+cluster_table
+
+```
+Above we have generated all the states that belong to the three distinct clusters that were cut from the dendrogram. The table gives us the number of states that are contained within each cluster. 
+ 
+3. Hierarchically cluster the states using complete linkage and Euclidean distance, after scaling the variables to have standard deviation one.
+
+```{R}
+# Scale the data
+scaled_data <- scale(USArrests)
+
+# Calculate the distance matrix
+dist_matrix <- dist(scaled_data)
+
+# Perform hierarchical clustering with complete linkage
+scale_cluster <- hclust(dist_matrix, method = "complete")
+
+# Plot the dendrogram
+ggdendrogram(scale_cluster)
+```
+
+4. What effect does scaling the variables have on the hierarchical clustering obtained? In your opinion, should the variables be scaled before the inter-observation dissimilarities are computed? Provide a justification for your answer.
+
+In my opinion, I believe that the variables should be scaled before the inter-observation dissimilarities are computed due to the data being in different measurement of units (across variables). It is generally good practice to scale the data as we are unsure of the relationship between each of the variables, as we could risk giving parameters with larger magnitudes more importance. Overall, in this particular case, scaling the observations increases the dissimilarities, ensuring all variables have the same range and importance.

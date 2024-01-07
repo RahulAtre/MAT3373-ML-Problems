@@ -1,0 +1,76 @@
+---
+title: "Q22"
+author: "Rahul Atre"
+date: "2023-10-31"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q22 [Regularization]
+
+We will now try to predict per capita crime rate in the **Boston** data set.
+
+1. Try out some of the regression methods explored in this chapter, such as best subset selection, the LASSO, ridge regression, and PCR. Present and discuss results for the approaches that you consider.
+
+
+```{R}
+bostonData = read.csv("Boston.csv")
+```
+
+```{R}
+# Method i) Least-Squares Approach
+lin_modelSqr = lm(crim ~ ., data = bostonData)
+summary(lin_modelSqr)
+```
+Variables that are statistically significant: zn, dis, rad, black, medv.
+
+```{R}
+library(leaps) #regsubsets import
+
+# Method 2: Best subset selection
+set.seed(144) #Ensure reproducible outputs for simulation
+
+p = 15 # Declare feature and observation values
+n = 506
+
+x = matrix(rnorm(n * p), n, p) #rnorm generates a vector which is reshaped to matrix (obs. vs. features)
+
+b = rnorm(p) # Beta vector for model
+eps = rnorm(n)
+
+y = x %*% b + eps #Create linear model from best subset selection
+
+training_set = sample(seq(n), n*0.60, replace = FALSE) 
+test_set = -training_set
+
+y.test = bostonData$crim[test_set]
+
+test_matrix = model.matrix(crim ~ ., data=bostonData[test_set,])
+
+best_subset <- regsubsets(crim ~ ., data = bostonData, nvmax = p)
+value_errs <- rep(NA, 14) #Variable to store training MSE
+
+for(i in 1:14){
+ coefficients <- coef(best_subset, id = i) #Obtain coefficients of model from i predictors
+ prediction <- test_matrix[,names(coefficients)] %*% coefficients #prediction value
+ value_errs[i] <- mean((y.test - prediction)^2) 
+}
+
+# Plot test MSE
+plot(value_errs, xlab = "Number of predictors", ylab = "Test Mean-Squared Error (MSE)", type = "b", col = "red")
+
+```
+
+2. Propose a model (or set of models) that seem to perform well on this data set, and justify your answer. Make sure that you are evaluating model performance using validation set error, cross- validation, or some other reasonable alternative, as opposed to using training error.
+
+The best subset model appears to perform better than the least squares approach since it is only selecting the most significant variables. For least-squares however, all variables were chosen to predict the crime rate but only a few were significant. The best subset model has one major drawback however, that it is computationally intensive and can sometimes lead to over fitting of the data.
+
+Due to the computational overhead of best subset selection, I would choose the least-squares model for its simplicity. From the above graph, we can see that best subset chose all the predictors due to a reduction in the Test MSE. So ultimately, it would have not made a significant difference if the least-squares approach was conducted.
+
+3. Does your chosen model involve all of the features in the data set? Why or why not?
+
+For the best-subset selection, all of the predictors have been selected. This is because as the number of predictors increase, the MSE decreases. 
+

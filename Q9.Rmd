@@ -1,0 +1,96 @@
+---
+title: "Q9"
+author: "Rahul Atre"
+date: "2023-10-03"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q9 [Data Visualization and Data Exploration]
+
+This exercise involves the Auto.csv dataset. Make sure that the missing values have been removed from the data.
+
+```{R}
+library(readr)
+autoData = na.omit(read.csv("Auto.csv"))
+```
+
+
+1. Which of the predictors are quantitative, and which are qualitative?
+
+Lets look at the initial values of each column
+
+```{R}
+str(autoData)
+```
+
+Based on the above data, the predictors that are quantitative are: mpg, cylinders, displacement, horsepower, weight, acceleration, year 
+
+The predictors that are qualitative are: origin, name
+
+2. What is the range of each quantitative predictor? You can answer this using the range() function.
+
+Since the last 3 columns are qualitative, we can ignore those and apply the following function: 
+
+```{R}
+sapply(autoData[, 1:7], range) #Apply the range function to all quant. columns 
+```
+
+3. What is the mean and standard deviation of each quantitative predictor?
+
+We can use the same function as above, replacing range with mean: 
+
+```{R}
+sapply(autoData[, 1:7], mean) #Apply the mean function to all quant. columns
+```
+```{R}
+sapply(autoData[, 1:7], sd) #Apply the standard deviation function to all quant. columns
+```
+4. Now remove the 10th through 85th observations. What is the range, mean, and standard deviation of each predictor in the subset of the data that remains?
+
+```{R}
+sapply(autoData[-(10:85), 1:7], range)
+```
+```{R}
+sapply(autoData[-(10:85), 1:7], mean)
+```
+
+```{R}
+sapply(autoData[-(10:85), 1:7], sd)
+```
+
+5. Using the full dataset, investigate the predictors graphically, using scatterplots or other tools of your choice. Create some plots highlighting the relationships among the predictors. Comment on your findings.
+
+```{R}
+par(mfrow=c(2,2)) #Create a plot matrix
+
+plot(autoData$displacement, autoData$horsepower, xlab = "Displacement", ylab = "Horsepower")
+plot(autoData$horsepower, autoData$weight, xlab = "Horsepower", ylab = "Weight")
+plot(autoData$horsepower, autoData$acceleration, xlab = "Horsepower", ylab = "Acceleration")
+plot(autoData$mpg, autoData$weight, xlab = "Mpg", ylab = "Weight")
+```
+Based on the above four scatterplots, we can make four conclusions regarding the correlation between the auto data's variables:
+
+- As displacement **increases**, horsepower **increases**
+- As horsepower **increases**, weight **increases**
+- As horsepower **increases**, the acceleration **decreases** 
+- As mpg **increases**, the weight **decreases**
+
+All relationships can be estimated using the least squares approach for a linear line of best fit.
+
+6. Suppose that we wish to predict gas mileage (mpg) on the basis of the other variables. Do your plots suggest that any of the other variables might be useful in predicting mpg? Justify your answer.
+
+
+```{R}
+par(mfrow=c(3,2), mar = c(5, 4, 1, 2)) #Create matrix of plots w/ set graphical parameters
+plot(autoData$cylinders ~ autoData$mpg, xlab = 'mpg', ylab = 'cylinders')
+plot(autoData$displacement ~ autoData$mpg, xlab = 'mpg', ylab = 'displacement')
+plot(autoData$horsepower ~ autoData$mpg, xlab = 'mpg', ylab = 'horsepower')
+plot(autoData$weight ~ autoData$mpg, xlab = 'mpg', ylab = 'weight')
+plot(autoData$acceleration ~ autoData$mpg, xlab = 'mpg', ylab = 'acceleration')
+```
+The above scatterplots do suggest that the other variables would be useful in predicting mpg. We can say that, for any positive correlation, the other variable would require a relatively higher value, whereas for a negative correlation, the other variable would need to have a lower value. So, mpg increases when the number of cylinders are low, displacement is low, horsepower is low, weight is low, and acceleration is high. 
+

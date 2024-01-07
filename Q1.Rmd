@@ -1,0 +1,59 @@
+---
+title: "Q1"
+author: "Rahul Atre"
+date: "2023-09-25"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Q1 [Types of Learning and Tasks]
+
+Assuming that data mining techniques are used in the following cases, identify whether the required task falls under supervised (SL) or unsupervised learning (UL). \newline
+
+1. Supervised Learning -> [Company has access to training data from demographics and financial information] \newline
+
+
+2. Supervised Learning -> [Making recommendations based on prior transaction info is a common SL activity] \newline
+
+
+3. Unsupervised Learning -> [Anomaly detection is a UL task] \newline
+
+
+4. Unsupervised Learning -> [Looking for similarities and natural patterns is a UL task] \newline
+
+
+5. Supervised Learning -> [The company has access to relevant financial data (training data) that is used as a predictive model for bankruptcy, which is an SL task] \newline
+
+
+6. Supervised Learning -> [Assuming that the airline company has a ticket tracking system, a trouble ticket would contain helpful data about airline issues, thus useful as labeled training data for predicting repair time of an aircraft. This is an SL activity] \newline
+
+
+7. Unsupervised Learning -> [Sorting is similar to grouping or clustering as we are looking for patterns within the zip code of the mail, and since there is no training data this is an example of a UL task] \newline
+
+ 
+8. Unsupervised Learning -> [The statement claims that it is easier to retain newer customers, but does not provide evidence or asserts that it has any data on this. Also, scoring customers can be a form of grouping to find natural patterns, a UL task] \newline
+
+
+9. Supervised Learning -> [Using audit data for training to predict which medical practitioners are over-billing is a SL task] \newline
+
+
+10. Unsupervised Learning -> [Market basket analysis is synonymous to association rules discovery, which is a type of unsupervised learning] \newline
+
+
+11. Supervised Learning -> [Building a predictive model using patient data is a common SL activity] \newline
+
+
+12. Supervised Learning -> [Schools typically have access to student information and demographics, which can be used as training data for predictive models to find students at risk for not returning to school, which is an SL task] \newline
+
+
+13. Unsupervised Learning -> [In this particular case, although the telecom companies have access to precise customer call detail records, it is utilized as a means to group customers for marketing purposes based on their calling behavior, a natural pattern. This is a UL activity] \newline
+
+
+14. Supervised Learning -> [Using decision models based on past machinery data for predicting equipment failure is a common SL approach] \newline
+
+
+15. Unsupervised Learning -> [From a data science perspective, the target is unknowable. Internet news, particularly associated to politics, is constantly changing, and dissemination of fake news is often imperceptible. As a result, finding natural groupings from tweets is likely the best approach for this case, a UL technique] \newline

@@ -1,0 +1,96 @@
+---
+title: "Q8"
+author: "Rahul Atre"
+date: "2023-10-02"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q8 [Data Visualization and Data Exploration]
+
+The file College.csv contains 18 measurements for 777 different universities and schools in the US. Load the data into a R data frame, and find a way to remove the Names column and place its values into the data frame’s row names.
+
+We can load the data into an R data frame (df) using the following command: 
+
+```{R}
+library(readr)
+collegeData = read.csv("College.csv")
+```
+
+To remove the Names column and place the values into the data frame's row names, we can apply the procedure below: 
+
+```{R}
+rownames(collegeData) <- collegeData[,1] #Rename rownames 
+collegeData <- collegeData[,-1] #Delete Names column
+```
+
+1. Produce a numerical summary of the variables in the data set. 
+
+```{R}
+summary(collegeData)
+```
+
+2. Produce a scatterplot matrix of the first ten columns in the data. 
+
+In R, we can use the function $pairs()$ to create a scatterplot matrix. Since the first index is a categorical column, we will skip that and start from the 2nd, till the 11th quantitative column.
+
+```{R}
+pairs(collegeData[, 2:11]) #Create scatterplot matrix with first 10 quantitative columns
+```
+
+3. Produce side-by-side boxplots of **Outstate** vs. **Private**. 
+
+In R, we can use the function $boxplot()$ to create a boxplot comparison between the two given columns
+
+```{R}
+boxplot(collegeData$Outstate ~ collegeData$Private, main = "Outstate vs. Private",
+        ylab = "Outstate Tuition Cost", xlab = "Public/Private Indicator")
+```
+
+
+4. Create a new categorical variable, **Elite**, by binning the **Top10perc** variable. This variable divides universities into two groups: those for which **Top10perc** > 50 (“Yes”), and those for which that is not the case (“No”). How many elite universities are there? Produce side-by-side boxplots of **Outstate** versus **Elite**. 
+
+```{R}
+collegeData$Elite <- ifelse(collegeData$Top10perc > 50, "Yes", "No")
+
+print(paste("The total number of elite universities are: ", table(collegeData$Elite)["Yes"]))
+
+boxplot(collegeData$Outstate ~ collegeData$Elite, main = "Outstate vs. Elite",
+        ylab = "Outstate Tuition Cost", xlab = "Elite University Indicator")
+```
+
+5. Produce histograms with differing numbers of bins for a few of the quantitative variables. 
+
+```{R}
+par(mfrow=c(2,2))
+hist(collegeData$PhD, xlab = "Percent faculty with PHD", main = "")
+hist(collegeData$Grad.Rate, xlab = "Graduation Rate of University", main = "")
+hist(collegeData$Room.Board, xlab = "Room and board costs", main = "")
+hist(collegeData$S.F.Ratio, xlab = "Student to Faculty Ratio", main = "")
+```
+
+6. Continue exploring the data, and provide a brief summary of what you discover.
+
+
+College with the highest new students from top 10% of their high school class
+```{R}
+row.names(collegeData)[which.max(collegeData$Top10perc)]
+```
+College with highest graduation rate
+```{R}
+summary(collegeData$Grad.Rate)
+row.names(collegeData[collegeData$Grad.Rate>100, ])
+collegeData['Cazenovia College', 'Grad.Rate']
+```
+College with highest percentage of faculty with PhD's
+```{R}
+summary(collegeData$PhD)
+row.names(collegeData[collegeData$PhD>100, ])
+collegeData['Texas A&M University at Galveston', 'PhD']
+```
+Interestingly, the values for highest graduation rate and highest PhD percentage show erroneous data, that is, incorrect and invalid information in the data set. It is not possible for a college to have a grad. rate or PhD rate higher than 100%. 
+
+We can conclude that this data set is unclean and needs to be tidied before performing statistical analysis on it or use it as training data for a machine learning model.

@@ -1,0 +1,30 @@
+---
+title: "Q45"
+author: "Rahul Atre"
+date: "2023-12-1"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q45 [Clustering]
+
+Do exercises 2 and 3, from DUDADS, chapter 22, using the Wine.csv dataset.
+
+2. Cluster the Wine datasets using k-means, for various distance metrics and algorithm parameters. What is your best estimation for the number of clusters in each case? Validate your results.
+
+```{R}
+
+
+```
+
+
+3. Cluster the Wine dataset using hierarchical clustering, for various algorithm parameters. Validate your results.
+
+
+```{R}
+
+
+```

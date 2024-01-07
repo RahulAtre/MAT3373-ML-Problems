@@ -1,0 +1,94 @@
+---
+title: "Q33"
+author: "Rahul Atre"
+date: "2023-11-15"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(e1071) 
+library(caTools) 
+library(class)
+```
+
+## Q33 [Classification]
+
+In this problem, we develop a model to predict whether a given car gets high or low gas mileage based on the Auto data set. Start by loading the data and removing all instances with missing values.
+
+
+```{R}
+auto_df = read.csv("auto.csv")
+auto_df = na.omit(auto_df)
+```
+
+1. Create a binary variable, mpg01, that contains a 1 if mpg contains a value above its median, and a 0 if mpg contains a value below its median. You can compute the median using the median() function. Note you may find it helpful to use the data.frame() function to create a single data set containing both mpg01 and the other Auto variables.
+
+```{R}
+mpg_median <- median(auto_df$mpg)
+auto_df$mpg01 <- ifelse(auto_df$mpg > mpg_median, 1, 0)
+```
+
+2. Explore the data graphically in order to investigate the association between mpg01 and the other features. Which of the other features seem most likely to be useful in predicting mpg01? Scatterplots and boxplots may be useful tools to answer this question. Describe your findings.
+
+```{R}
+cor(subset(auto_df, select = -name))
+par(mfrow=c(2,3))
+boxplot(cylinders ~ mpg01, main = "Cylinders vs. mpg01", data = auto_df)
+boxplot(displacement ~ mpg01, main = "Displacement vs. mpg01", data = auto_df)
+boxplot(horsepower ~ mpg01, main = "Horsepower vs. mpg01", data = auto_df)
+boxplot(weight ~ mpg01, main = "Weight vs. mpg01", data = auto_df)
+boxplot(acceleration ~ mpg01, main = "Acceleration vs. mpg01", data = auto_df)
+boxplot(year ~ mpg01, main = "Year vs. mpg01", data = auto_df)
+```
+As we can see from the above boxplots and the correlation matrix, the features that seem the most likely in predicting mpg01 are: cylinders, displacement, horsepower, and weight. It is important to note from the correlation matrix that all of these predictors are negatively correlated to mpg01.
+
+3. Split the data into a training set and a test set.
+
+```{R}
+set.seed(144)
+
+training_set = auto_df[sample(nrow(auto_df), 0.75 * nrow(auto_df)), ]
+test_set = auto_df[setdiff(1:nrow(auto_df), rownames(training_set)), ]
+```
+
+6. Perform logistic regression on the training data in order to predict mpg01 using the variables that seemed most associated with mpg01 in 2. What is the test error of the model obtained?
+
+```{R}
+set.seed(144)
+
+training_set = training_set[, c("mpg01", "cylinders", "displacement", "horsepower", "weight")]
+
+test_set = test_set[, c("mpg01", "cylinders", "displacement", "horsepower", "weight")]
+logistic_model <- glm(mpg01 ~ .,data = test_set, family = binomial)
+
+accuracy = mean((predict(logistic_model, test_set, type = "response") > 0.5) ==  test_set$mpg01)
+
+1 - accuracy #Test error rate
+```
+The test error for the model is about 11.76%.
+
+7. Perform kNN on the training data, with several values of k, in order to predict mpg01. Use only the variables that seemed most associated with mpg01 in 2. What test errors do you obtain? Which value of k seems to perform the best on this data set? 
+
+
+```{R}
+set.seed(144)
+
+k_values = c(1, 2, 3, 4, 5, 10, 20, 50, 100)
+
+test_errors = matrix(0, nrow = length(k_values), ncol = 2)
+predictors = c("cylinders", "displacement", "horsepower", "weight")
+
+training_pred = training_set[, predictors]
+test_pred = test_set[, predictors]
+
+for (i in 1:length(k_values)) {
+knn_model = knn(train = training_pred, test = test_pred, cl = training_set$mpg01, k = k_values[i])
+test_errors[i, ] = c(k_values[i], mean(knn_model != test_set$mpg01))
+}
+
+test_errors
+
+```
+
+The values of k that perform the best is k = 4, with a test error of 0.06796117. Although k=1 has the lowest, it would cause the data to be underfit. k=4 is the "sweet-spot" in terms of fitting the data accurately with any bias. 

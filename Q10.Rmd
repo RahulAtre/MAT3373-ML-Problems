@@ -1,0 +1,150 @@
+---
+title: "Q10"
+author: "Rahul Atre"
+date: "2023-10-04"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q10 [Data Visualization and Data Exploration]
+
+This exercise involves the Boston housing dataset.
+
+1.  Load the Boston dataset (it is part of the MASS library in R).
+
+```{R, include=FALSE}
+library(MASS)
+```
+
+How many rows are in this dataset? How many columns? What do the rows and columns represent?
+
+We can use the dim() function to obtain the dimensionality of the dataframe
+
+```{R}
+dim(Boston)
+```
+
+Therefore, there are 506 rows and 14 columns for this dataset. The rows represent the individual suburbs (or towns) in Boston, and the 14 columns represent the various attributes or features of those suburbs, such as tax, pupil-teacher ratio, crime rate, etc.
+
+2.  Make some pairwise scatterplots of the predictors (columns) in this dataset. Describe your findings.
+
+- pairs(Boston) #Output not shown due to size, however it runs properly
+
+
+```{R}
+par(mfrow = c(2, 2))
+plot(Boston$crim, Boston$lstat, log = 'xy', xlab = 'Lower Status of the population (percentage)', ylab = 'per capita crime rate by town')
+
+plot(Boston$ptratio, Boston$lstat, xlab = 'Lower Status of the population (percentage)', ylab = 'Pupil-teacher ratio by town')
+
+plot(Boston$rad, Boston$tax, xlab = 'full-value property-tax per $10,000', ylab = 'Accessibility to radial highways')
+
+plot(Boston$nox, Boston$indus, log = 'xy', xlab = 'Proportion of non-retail business acres per town', ylab = 'nitrogen-oxide concentration')
+
+#We used a logarithmic scale for the y-axis due to the exponential relationship between some of the predictor variables.
+
+```
+
+Based on the scatterplot, we created four subplots to derive the significant findings of the data set, which are:
+
+-   There is a positive correlation between the lower status of population and overall crime. If a high percent of population are of lower status, then there is a larger volume of crime in the suburb.
+
+-   Similar to the previous case, there is also a positive correlation in lower status of population and a lower pupil-teacher ratio. Suburbs with poorer families have underfunded schools with less teachers and more students.
+
+-   There is a weak (still existing) positive correlation in property tax rate per \$10,000 and the index of accessibility to radial highways.
+
+-   This is a weak (still existing) positive correlation between the proportion of non-retail business acres per town and the nitrogen-oxide concentration. Based on knowledge of science, businesses tend to generate carbon emissions depending on whether they produce goods that utilize fossil fuels. However, as data scientists, we cannot assume that this is the implication of the data. Correlation does not equal causation or in this case, assumptions of outcome through data.
+
+3.  Are any of the predictors associated with per capita crime rate? If so, explain the relationship.
+
+```{R}
+par(mfrow = c(2, 2))
+plot(Boston$crim ~ Boston$lstat, log = 'xy', xlab = 'Lower Status of Pop.', ylab = 'Per Capita Crime Rate')
+
+plot(Boston$crim ~ Boston$age, log = 'xy', xlab = 'Proportion of owner-occupied units', ylab = 'Per Capita Crime Rate')
+
+plot(Boston$crim ~ Boston$nox, log = 'xy', xlab = 'Nitrogen Oxide Concentration', ylab = 'Per Capita Crime Rate')
+
+plot(Boston$crim ~ Boston$dis, log = 'xy', xlab = 'Weighted mean of dist. to 5 Employment centers', ylab = 'Per Capita Crime Rate')
+```
+
+For predictors Lower Status, Proportion of owner-occupied units, and nitrogen-oxide concentration, there is a strong positive correlation with the overall crime rate. For the weighted mean of distance to five employment centers however, there is a negative correlation with crime, meaning that when there are more employment centers, the crime rate falls drastically (**exponential**). Also it is important to note that, all of the following correlations are exponential, meaning that even for the positive correlations, there is an **exponential increase** in crime if the predictor variables increase.
+
+4.  Do any of the suburbs of Boston appear to have particularly high crime rates? Tax rates? Pupil-teacher ratios? Comment on the range of each predictor.
+
+```{R, out.width="50%", out.height = "50%"}
+hist(Boston$crim, breaks=20, main = "Per capita crime rate", xlab ='')
+```
+
+For the above histogram, we can strongly conclude that majority of the suburbs in Boston have zero per capita crime rate. There are only a few suburbs which cross a 20 per capita crime rate, and even fewer that reach till 40.
+
+```{R, out.width="50%", out.height = "50%"}
+hist(Boston$tax, breaks=25, main = "Full-value property-tax rate", xlab ='')
+```
+
+For the full-value property-tax rate, there is a significant number of values near the 700 mark, though a large portion of the suburbs have a tax range between 200 and 400 as well.
+
+```{R, out.width="50%", out.height = "50%"}
+hist(Boston$ptratio, breaks=10, main = "Pupil-teacher ratio", xlab ='')
+```
+
+The above histogram for pupil-teacher ratio indicates that there is an evenly distributed number of suburbs with a ratio between 14 and 22, although there is a relative peak at value 20, indicating a higher frequency of pupil-teacher ratio for that specific data point.
+
+5.  How many of the suburbs in this dataset bound the Charles river?
+
+```{R}
+sum(Boston$chas == 1)
+```
+
+6.  What is the median pupil-teacher ratio among the towns in this dataset?
+
+```{R}
+median(Boston$ptratio)
+```
+
+7.  Which suburb of Boston has lowest median value of owner- occupied homes? What are the values of the other predictors for that suburb, and how do those values compare to the overall ranges for those predictors? Comment on your findings.
+
+```{R}
+lowestSuburb = Boston[order(Boston$medv), ] #Order dataframe from lowest to highest medv values
+lowestSuburb[1, ] #Select first row from dataframe
+```
+From the above calculation, Suburb 399 has the lowest median value of owner-occupied homes at $5000. Provided above are the values of the other predictors for that suburb (i.e. per capita crime is 38.35, average room per dwelling is 5.453, and so forth). 
+
+```{R, echo = TRUE, eval = FALSE}
+summary(Boston)
+```
+We can generate a summary of all predictors (not shown due to size). Comparing each predictor to the respective quantiles of the summary, it appears that:
+crim: very high
+zn: very low
+indus: high
+nox: high
+rm: low
+age: very high
+dis: low
+rad: very high
+tax: very high
+ptratio: very high
+black: very high
+lstat: high
+
+8.  In this dataset, how many of the suburbs average more than seven rooms per dwelling? More than eight rooms per dwelling? Comment on the suburbs that average more than eight rooms per dwelling
+
+```{R}
+sum(Boston$rm > 7)
+```
+There are 64 suburbs that average more than seven rooms per dwelling.
+
+```{R}
+sum(Boston$rm > 8)
+```
+There are 13 suburbs that average more than eight rooms per dwelling.
+
+```{R}
+Boston_avgEight = Boston[Boston$rm > 8, ]
+summary(Boston_avgEight)
+```
+From the suburbs that average more than eight rooms per dwelling, we can see that the overall crime rate is very low, at a median of 0.52. The lower status of population is also much lower, at a median of 4.14 (median of all suburbs is 11.36). We can conclude that the average suburb with 8 or more rooms per dwelling seem to be maintained better based on a few of the predictors when compared relative to all suburbs in the dataset.
+

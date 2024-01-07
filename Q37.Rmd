@@ -1,0 +1,80 @@
+---
+title: "Q37"
+author: "Rahul Atre"
+date: "2023-11-21"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(e1071)
+```
+
+## Q37 [Classification]
+
+In this problem, you will use support vector approaches in order to predict whether a given car gets high or low gas mileage based on the Auto data set.
+
+1. Create a binary variable that takes on a 1 for cars with gas mileage above the median, and a 0 for cars with gas mileage below the median.
+
+First, lets load in the data for Auto.csv:
+
+```{R}
+auto_df = read.csv("auto.csv")
+mpg01 = ifelse(auto_df$mpg > median(auto_df$mpg), 1, 0)
+auto_df$mpg01 = as.factor(mpg01)
+```
+
+2. Fit a support vector classifier to the data with various values of cost, in order to predict whether a car gets high or low gas mileage. Report the cross-validation errors associated with different values of this parameter. Comment on your results. 
+
+```{R}
+set.seed(144)
+
+support_vector_model = tune(svm, mpg01 ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, kernel = "linear", data = auto_df, ranges = list(cost = c(0.001, 0.05, 1, 5, 10, 50, 100)))
+summary(support_vector_model)
+```
+
+From the above function call, we can see that the best cost is 0.001 and has an error of 0.1128195.
+
+3. Now repeat 2., this time using SVMs with radial and polynomial basis kernels, with different values of gamma and degree and cost. Comment on your results.
+
+```{R}
+set.seed(144)
+
+poly_svm_model = tune(svm, mpg01 ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, kernel = "polynomial", data = auto_df, ranges = list(cost = c(0.001, 0.05, 5, 10, 100), degree = c(2, 3, 4)))
+summary(poly_svm_model)
+```
+
+From the above function call, the best cost is 10 with degree 3, and has an error of 0.1143509.
+
+Let us now use the radial kernel:
+
+```{R}
+set.seed(144)
+
+radial_model = tune(svm, mpg01 ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, kernel = "radial", data = auto_df, ranges = list(cost = c(0.01, 0.5, 1, 4, 5, 20, 50), gamma = c(0.01, 0.5, 1)))
+summary(radial_model)
+```
+For the radial kernel, we obtain that the best cost is 1 with gamma = 0.5. It has an error of 0.08907398.
+
+
+4. Make some plots to back up your assertions in 2. and 3.
+
+
+```{R, out.width = "40%", out.height = "40%"}
+linear_svm = svm(mpg01 ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, data = auto_df, kernel = "linear", cost = 0.001)
+
+poly_svm = svm(mpg01 ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, data = auto_df, kernel = "polynomial", cost = 10, degree = 3)
+
+radial_svm = svm(mpg01 ~ cylinders + displacement + horsepower + weight + acceleration + year + origin, data = auto_df, kernel = "radial", cost = 1, gamma = 0.05)
+
+plotpairs = function(model) {
+    for(name in names(auto_df)[!(names(auto_df) %in% c("mpg", "name", "mpg01"))]) {
+        plot(model, auto_df, as.formula(paste("mpg~", name, sep = "")))
+    }
+}
+plotpairs(linear_svm)
+plotpairs(poly_svm)
+plotpairs(radial_svm)
+```
+
+

@@ -1,0 +1,178 @@
+---
+title: "Q3"
+author: "Rahul Atre"
+date: "2023-09-27"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q3 [Association Rules Mining]
+
+A store that sells accessories for smart phones runs a promotion on faceplates. Customers who purchase multiple faceplates from a choice of 6 different colours get a discount. The store managers, who would like to know what colours of faceplates are likely to be purchased together, collected past transactions in the file Transactions.csv.
+
+
+1. For each rule, compute the support, confidence, interest, lift, and conviction.
+
+Recall: The above five rule metrics are stated as follows:
+
+$$Support(X \rightarrow Y) = \frac{Freq(X \cap Y)}{N} \in [0,1]$$
+$$Confidence(X \rightarrow Y) = \frac{Freq(X \cap Y)}{Freq(X)} \in [0,1]$$
+$$Interest(X \rightarrow Y) = Confidence(X \rightarrow Y) - \frac{Freq(Y)}{N} \in [-1,1]$$
+$$Lift(X \rightarrow Y) = \frac{N^2 \cdot Support(X \rightarrow Y)}{Freq(X) \cdot Freq(Y)} \in (0,N^2)$$
+$$Conviction(X \rightarrow Y) = \frac{1 - Freq(Y)/N}{1 - Confidence(X \rightarrow Y)} \ge 0$$
+Loading the data from Transactions.csv:
+
+```{R}
+transData = read.csv("Transactions.csv")
+```
+
+First, we can create a function that calculates all the rule metrics, given the frequency of x, y, XAndY, and N.
+
+```{R}
+rule_metric_func<- function(freqX, freqY, freqXandY, N) {
+  support <- paste("Support: ", freqXAndY/N * 100, "%")
+  confidence <- paste("Confidence: ", freqXAndY/freqX * 100, "%")
+  interest <- paste("Interest: " , freqXAndY/freqX - freqY/N)
+  lift <- paste("Lift: ", (N^2 * freqXAndY/N)/(freqX * freqY))
+  conviction <- paste("Conviction: ", (1 - freqY/N)/(1 - freqXAndY/freqX))
+  
+  output <- cat(support, confidence, interest, lift, conviction, sep = "\n")
+}
+```
+
+i) {red, white} → {green}
+
+```{R}
+freqX <- nrow(transData[transData$Red == 1 & transData$White == 1,])
+freqY <- nrow(transData[transData$Green == 1,])
+freqXAndY <- nrow(transData[transData$Red == 1 & transData$White == 1 & transData$Green == 1,])
+N <- nrow(transData)
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+ii) {green} → {white}
+
+```{R}
+freqX <- nrow(transData[transData$Green == 1,])
+freqY <- nrow(transData[transData$White == 1,])
+freqXAndY <- nrow(transData[transData$Green == 1 & transData$White == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+iii) {red, green} → {white}
+
+```{R}
+freqX <- nrow(transData[transData$Red == 1 & transData$Green == 1,])
+freqY <- nrow(transData[transData$White == 1,])
+freqXAndY <- nrow(transData[transData$Red == 1 & transData$Green == 1 & transData$White == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+iv) {green} → {red}
+
+```{R}
+freqX <- nrow(transData[transData$Green == 1,])
+freqY <- nrow(transData[transData$Red == 1,])
+freqXAndY <- nrow(transData[transData$Green == 1 & transData$Red == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+v) {orange} → {red}
+
+```{R}
+freqX <- nrow(transData[transData$Orange == 1,])
+freqY <- nrow(transData[transData$Red == 1,])
+freqXAndY <- nrow(transData[transData$Orange == 1 & transData$Red == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+vi) {white, black} → {yellow}
+
+```{R}
+freqX <- nrow(transData[transData$White == 1 & transData$Black == 1,])
+freqY <- nrow(transData[transData$Yellow == 1,])
+freqXAndY <- nrow(transData[transData$White == 1 & transData$Black == 1 & transData$Yellow == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+vii) {black} → {green}
+
+```{R}
+freqX <- nrow(transData[transData$Black == 1,])
+freqY <- nrow(transData[transData$Green == 1,])
+freqXAndY <- nrow(transData[transData$Black == 1 & transData$Green == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+
+2. Amongst the rules for which the support is positive (> 0), which one has the highest lift? Confidence? Interest? Conviction?
+
+Among rules for which support is positive, the rule with highest lift, confidence, interest, and conviction is vi) {white, black} → {yellow}
+
+3. Build an additional 5-10 candidate rules (randomly), and evaluate them. Which of the 5-10 candidate rules do you think would be most useful for the store managers?
+
+- {red, yellow} -> {orange}
+
+```{R}
+freqX <- nrow(transData[transData$Red == 1 & transData$Yellow == 1,])
+freqY <- nrow(transData[transData$Orange == 1,])
+freqXAndY <- nrow(transData[transData$Red == 1 & transData$Yellow == 1 & transData$Orange == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+- {white} -> {black}
+
+```{R}
+freqX <- nrow(transData[transData$White == 1,])
+freqY <- nrow(transData[transData$Black == 1,])
+freqXAndY <- nrow(transData[transData$White == 1 & transData$Black == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+- {green} -> {yellow}
+
+```{R}
+freqX <- nrow(transData[transData$Green == 1,])
+freqY <- nrow(transData[transData$Yellow == 1,])
+freqXAndY <- nrow(transData[transData$Green == 1 & transData$Yellow == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+- {red} -> {white}
+
+```{R}
+freqX <- nrow(transData[transData$Red == 1,])
+freqY <- nrow(transData[transData$White == 1,])
+freqXAndY <- nrow(transData[transData$Red == 1 & transData$White == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+- {green, yellow} -> {red}
+
+```{R}
+freqX <- nrow(transData[transData$Green == 1 & transData$Yellow == 1,])
+freqY <- nrow(transData[transData$Red == 1,])
+freqXAndY <- nrow(transData[transData$Green == 1 & transData$Yellow == 1 & transData$Red == 1,])
+
+rule_metric_func(freqX, freqY, freqXandY, N) #Calculating Rule Metrics
+```
+
+Out of the rules I created, I believe that the first two would be most useful for store managers. For the first rule, according to color science, if you mix red and yellow, the output is typically orange. It would be useful to know if customers are likely to purchase colors that mix together. For the second rule, white and black are opposites that contrast each other on the color spectrum. This is because black is made from "all colors" whereas white has absence of color. It would be insightful to know for store managers if such a concept has any basis in rule metrics. 
+
+4. How would one determine reasonable threshold values for the support, coverage, interest, and lift of rules derived from a given dataset?
+
+In general, it is impractical to provide definitive or fixed threshold values for the following rules since it always depends on the specific context of the dataset. As data scientists, it is ideal to explore the association rules first before determining a reasonable threshold. Candidate rules afterwards, can be discarded or accepted in accordance to the metric thresholds determined. Specific sectors for data such as academic, professional, economic, government, military, commercial, etc., could have varying quality requirements, and therefore, seeking perfection in data through a strong threshold can be disruptive to data analysis.

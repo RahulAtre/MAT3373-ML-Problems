@@ -1,0 +1,20 @@
+---
+title: "Q7"
+author: "Rahul Atre"
+date: "2023-10-01"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q7 [Statistical Learning]
+
+Does Chat-GPT’s answer capture the essence of the difference between the two approaches? Is anything missing from the answer? \newline
+
+Yes, Chat-GPT's answer captures a significant portion of the difference between parametric and non-parametric statistical learning. It talks about the efficiency and interpretability of parametric models, allowing for fixed number of parameters (ex. $\beta_0$ or $\beta_1$), and easily understandable models that provide insight towards variable relations. Parametric models allow generalization by using enough data and having correct assumptions. The disadvantages are also correctly stated, as they rely on assumptions (which may or may not hold) and are less flexible due to a constrained, prefixed structure that ignores complex relations in the data. \newline
+ 
+As for the non-parametric approach, Chat-GPT sufficiently explains how it can compensate for the parametric approaches weaknesses, with immense flexibility over expressing complex relations and finding natural patterns in the data. It also explains the ability to capture outliers. The immediate downsides are stated as well, which include the computational expense from non-fixed parameters, overfitting of data in the presence of outliers, and lack of interpretability due to complex models in most cases. \newline
+
+In my opinion, I believe the core idea that is missing from Chat-GPT's answer lies in the concluding summary. It thoroughly summarizes the trade-off between the parametric and non-parametric approach, stating that the choice ultimately depends on factors like data, the specific problem, or the decision between simplicity and flexibility. One aspect that is not considered however, is that for any given model (whether it is applied in the field of medicine, robotics, finance, etc) for the non-parametric approach, to interpret final results requires someone with expertise in that particular field. Since non-parametric models are not easily understood due to complexity of vast parameters and non-assumptions, an expert can derive the results rigorously to make sure that the model is not overfitting the data from noise. If this cannot be done, the computational expense can be a burden on the business or individual processing the model. 

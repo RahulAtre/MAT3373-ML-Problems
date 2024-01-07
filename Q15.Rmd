@@ -1,0 +1,67 @@
+---
+title: "Q15"
+author: "Rahul Atre"
+date: "2023-10-13"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Q15 [Regression Modeling]
+
+We investigate the t-statistic for the null hypothesis $H_0 : \beta = 0$ in simple linear regression without an intercept. To begin, we generate a predictor x and a response y as follows.
+
+```{R}
+set.seed(1)
+x=rnorm(100)
+y=2*x+rnorm(100)
+```
+
+1. Perform a simple linear regression of y onto x, without an intercept. Report the coefficient estimate $\beta$, the standard error of this coefficient estimate, and the t-statistic and p-value associated with the null hypothesis $H_0 : \beta = 0$. Comment on these results. (You can perform regression without an intercept using the command lm(x ~ y + 0)).
+
+```{R}
+lin_model = lm(y ~ x + 0)
+summary(lin_model)
+```
+The coefficient estimate $\hat\beta$ is 1.9939, the standard error for this estimate is 0.1065, the t-statistic is 18.73, and the p-value is less than 2e-16, which itself is substantially less than 0.05. From the extremely small p-value, we can reject the null hypothesis $H_0: \beta = 0$. 
+
+2. Now perform a simple linear regression of x onto y without an intercept, and report the coefficient estimate, its standard error, and the corresponding t-statistic and p-values associated with the null hypothesis $H_0 : \beta = 0$. Comment on these results.
+
+```{R}
+lin_model2 = lm(x ~ y + 0)
+summary(lin_model2)
+```
+From the above function call, we get that the estimated coefficient for $\beta$ is 0.39111, the standard error is 0.02089, the t-statistic is 18.73, and the p-value is less than 2e-16, which is substantially less than 0.05. This implies that the parameter is statistically significant, and we can reject the null-hypothesis $H_0$.
+
+3. What is the relationship between the results obtained in 1. and 2.?
+
+From the results in 1 and 2, we can see that the t-statistic and p-value are the same. However, the estimated beta coefficient values are different.
+
+
+5. Using the results from 4., argue that the t-statistic for the regression of y onto x is the same as the t-statistic for the regression of x onto y.
+
+The t-statistic formula is given as:
+
+$$\frac{(\sqrt{n-1})\sum_{i=1}^{n}x_iy_i}{\sqrt{(\sum_{i=1}^{n}x_i^2)(\sum_{i'}^{n}y_{i'}^2) - (\sum_{i'}^{n}x_{i'}y_{i'})^2}}$$
+We can see from the formula that, if we interchange the x and y values, the t-statistic would remain the same. Thus, the t-statistic for regression of y onto x will always be the same as the t-statistic for the regression of x onto y.
+
+
+6. In R, show that when regression is performed with an intercept, the t-statistic for $H_0 : \beta_1 = 0$ is the same for the regression of y onto x as it is for the regression of x onto y.
+
+We will use the same data, except instead we will allow R to choose the intercept instead of setting it strictly to 0.
+
+```{R}
+lin_model_intercept = lm(y ~ x)
+summary(lin_model_intercept)
+```
+
+```{R}
+lin_model_intercept2 = lm(x ~ y)
+summary(lin_model_intercept)
+```
+
+As we can see from the two summary tables, the t-statistics for the beta parameters are given as 18.556 for $\beta_1$, which is the same for both models.
+
+
